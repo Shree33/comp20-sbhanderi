@@ -19,10 +19,10 @@
 
     video.addEventListener("timeupdate", function() {
                 if (video.currentTime <= 30) {
-            lyrics.innerHTML ="<h3>The sun shines bright in My Old Kentucky Home,</h3><h3>'Tis summer, the people are gay;</h3><h3>The corn-top's ripe and the meadow's in the bloom</h3><h3> While the birds make music all the day.</h3>";
+            lyrics.innerHTML ="<h3>The sun shines bright in My Old Kentucky Home,</h3><h3>'Tis summer, the people are gay;</h3><h3>The corn-top's ripe and the meadow's in the bloom</h3><h3> While the birds make music all the day.</h3><img src='bird.jpeg' alt = 'image of bird'>"
         }
         else if (video.currentTime > 30 && video.currentTime < 60) {
-            lyrics.innerHTML = " <h3>The young folks roll on the little cabin floor,</h3><h3>All merry, all happy and bright;</h3><h3>By 'n' by hard times comes a knocking at the door,</h3><h3>Then My Old Kentucky Home, good night!</h3>"
+            lyrics.innerHTML = " <h3>The young folks roll on the little cabin floor,</h3><h3>All merry, all happy and bright;</h3><h3>By 'n' by hard times comes a knocking at the door,</h3><h3>Then My Old Kentucky Home, good night!</h3><img src='cabin.png' alt = 'image of cabin'>"
         }
         else { lyrics.innerHTML = " <h3>Weep no more my lady</h3><h3>Oh weep no more today;</h3><h3>We will sing one song</h3><h3>For My Old Kentucky Home</h3><h3>For My Old Kentucky Home, far away</h3>"
         }
