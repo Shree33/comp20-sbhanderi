@@ -1,0 +1,20 @@
+html {
+        text-align: center;
+}
+
+video {
+        display: block;
+        margin: 0 auto;
+}
+
+#title {
+        color: #3172AE;
+}
+ 
+#lyrics {
+        color: #3172AE;
+        border: solid #6D6F72 1px;
+        border-radius: 10px;
+        padding: 5px;
+        margin: 10px;
+}

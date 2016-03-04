@@ -1,8 +1,9 @@
 
+Shreenath Bhanderi
+Lab: My Old Kentucky Home
+This lab centered around using javascript to annotate a music video with lyrics and images.
 
 
-
-Identify what aspects of the work have been correctly implemented and what have not.
-Identify anyone with whom you have collaborated or discussed the assignment.
-Say approximately how many hours you have spent completing the assignment.
-Be written in either text format (README.txt) or in Markdown (README.md). No other formats will be accepted.
+Everything has been correctly implemented.
+I spoke to Alyssa Fusillo about troubleshooting.
+I spent about 3 hours working on this lab.
