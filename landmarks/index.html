@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+
+        <head>
+                <title>Landmarks</title>
+                <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+                <link rel="stylesheet" href="style.css" />
+                
+                <script>
+                        var myLat = 0;
+                        var myLng = 0;
+                        var request = new XMLHttpRequest();
+                        var loc = new google.maps.LatLng(myLat, myLng);
+                        var myOptions = {
+                                                zoom: 13, 
+                                                center: loc,
+                                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                                        };
+                        var map;
+                        var marker;
+                        var infowindow = new google.maps.InfoWindow();
+                        
+                        function init()
+                        {
+                                map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+                                getLocation();
+                        }
+                        
+                        function getLocation() {
+                                if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+                                        navigator.geolocation.getCurrentPosition(function(position) {
+                                                myLat = position.coords.latitude;
+                                                myLng = position.coords.longitude;
+                                                renderMap();
+                                        });
+                                }
+                                else {
+                                        alert("Geolocation is not supported by your web browser.");
+                                }
+                        }
+
+                        function renderMap()
+                        {
+                                me = new google.maps.LatLng(myLat, myLng);
+                                
+                                map.panTo(loc);
+        
+                                marker = new google.maps.Marker({
+                                        position: loc,
+                                        title: "Your Location"
+                                });
+                                marker.setMap(map);
+                                        
+                                // Open info window on click of marker
+                                google.maps.event.addListener(marker, 'click', function() {
+                                        infowindow.setContent(marker.title);
+                                        infowindow.open(map, marker);
+                                });
+                        }
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                </script>
+        </head>
+        
+        <body onload="init()">
+                <div id="map_canvas"></div>
+        </body>
