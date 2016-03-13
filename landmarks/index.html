@@ -6,6 +6,7 @@
                 <title>Landmarks</title>
                 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
                 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+                <script src="request.js"></script>
                 <link rel="stylesheet" href="style.css" />
                 
                 <script>
@@ -26,6 +27,7 @@
                         {
                                 map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
                                 getLocation();
+
                         }
                         
                         function getLocation() {
@@ -34,6 +36,8 @@
                                                 myLat = position.coords.latitude;
                                                 myLng = position.coords.longitude;
                                                 renderMap();
+                                                senddata();
+
                                         });
                                 }
                                 else {
@@ -43,7 +47,7 @@
 
                         function renderMap()
                         {
-                                me = new google.maps.LatLng(myLat, myLng);
+                                loc = new google.maps.LatLng(myLat, myLng);
                                 
                                 map.panTo(loc);
         
@@ -59,7 +63,21 @@
                                         infowindow.open(map, marker);
                                 });
                         }
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+
+                        function senddata() {
+                                var request = new XMLHttpRequest();
+                                var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
+                                var params = "login=LINDA_BRITT&lat=" + myLat + "&lng="+myLng;
+
+                                request.open('POST', url , true);
+                                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+
+                                console.log(myLat);
+                                console.log(myLng);
+                                request.send(params);
+
+                        }
                 </script>
         </head>
         
