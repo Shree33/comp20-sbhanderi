@@ -2,85 +2,95 @@
 
 <html>
 
-        <head>
-                <title>Landmarks</title>
-                <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
-                <script src="request.js"></script>
-                <link rel="stylesheet" href="style.css" />
+    <head>
+        <title>Landmarks</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+        <script src="request.js"></script>
+        <link rel="stylesheet" href="style.css" />
                 
-                <script>
-                        var myLat = 0;
-                        var myLng = 0;
-                        var request = new XMLHttpRequest();
-                        var loc = new google.maps.LatLng(myLat, myLng);
-                        var myOptions = {
-                                                zoom: 13, 
-                                                center: loc,
-                                                mapTypeId: google.maps.MapTypeId.ROADMAP
-                                        };
-                        var map;
-                        var marker;
-                        var infowindow = new google.maps.InfoWindow();
+        <script>
+            var myLat = 0;
+            var myLng = 0;
+            var request = new XMLHttpRequest();
+            var loc = new google.maps.LatLng(myLat, myLng);
+            var myOptions = {
+                zoom: 13, 
+                center: loc,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+            var map;
+            var marker;
+            var infowindow = new google.maps.InfoWindow();
                         
-                        function init()
-                        {
-                                map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-                                getLocation();
+            function init() {
+                map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+                getLocation();
 
-                        }
+            }
                         
-                        function getLocation() {
-                                if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
-                                        navigator.geolocation.getCurrentPosition(function(position) {
-                                                myLat = position.coords.latitude;
-                                                myLng = position.coords.longitude;
-                                                renderMap();
-                                                senddata();
+            function getLocation() {
+                if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        myLat = position.coords.latitude;
+                        myLng = position.coords.longitude;
+                        renderMap();
+                        senddata();
 
-                                        });
-                                }
-                                else {
-                                        alert("Geolocation is not supported by your web browser.");
-                                }
-                        }
+                        });
+                }
+                else {
+                    alert("Geolocation is not supported by your web browser.");
+                }
+            }
 
-                        function renderMap()
-                        {
-                                loc = new google.maps.LatLng(myLat, myLng);
+            function renderMap(){
+                loc = new google.maps.LatLng(myLat, myLng);
                                 
-                                map.panTo(loc);
+                map.panTo(loc);
         
-                                marker = new google.maps.Marker({
-                                        position: loc,
-                                        title: "Your Location"
-                                });
-                                marker.setMap(map);
+                marker = new google.maps.Marker({
+                    position: loc,
+                    title: "Your Location"
+                });
+                marker.setMap(map);
                                         
-                                // Open info window on click of marker
-                                google.maps.event.addListener(marker, 'click', function() {
-                                        infowindow.setContent(marker.title);
-                                        infowindow.open(map, marker);
-                                });
-                        }
+                // Open info window on click of marker
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.setContent(marker.title);
+                    infowindow.open(map, marker);
+                });
+            }
 
 
-                        function senddata() {
-                                var request = new XMLHttpRequest();
-                                var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
-                                var params = "login=LINDA_BRITT&lat=" + myLat + "&lng="+myLng;
+            function senddata() {
+                var request = new XMLHttpRequest();
+                var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
+                var params = "login=LINDA_BRITT&lat=" + myLat + "&lng="+ myLng;
 
-                                request.open('POST', url , true);
-                                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+                request.open('POST', url , true);
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
 
-                                console.log(myLat);
-                                console.log(myLng);
-                                request.send(params);
+                request.send(params);
 
-                        }
-                </script>
-        </head>
+
+                //if (request.readyState == 4 && request.status == 200) {
+                    request.onreadystatechange = function () {
+                        var parsed = JSON.parse(request.responseText);
+
+                        for (var i = 0; i < parsed.people.length; i++) {
+                            console.log(parsed.people[i].login);
+                            marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
+                            map: map
+                        });
+                    }
+                }
+            }
+
+        </script>
+    </head>
         
-        <body onload="init()">
-                <div id="map_canvas"></div>
-        </body>
+    <body onload="init()">
+            <div id="map_canvas"></div>
+    </body>
