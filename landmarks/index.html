@@ -75,18 +75,31 @@
 
 
                 //if (request.readyState == 4 && request.status == 200) {
-                    request.onreadystatechange = function () {
+                request.onreadystatechange = function () {
                         var parsed = JSON.parse(request.responseText);
 
                         for (var i = 0; i < parsed.people.length; i++) {
-                            console.log(parsed.people[i].login);
                             marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
-                            map: map
+                                title: parsed.people[i].login,
+                                position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
+                                map: map
+                            });
+                        }
+
+                        for (var i = 0; i < parsed.landmarks.length; i++) {
+                            marker = new google.maps.Marker({
+                                title: parsed.landmarks[i].properties.Location_Name,
+                                position: new google.maps.LatLng(parsed.landmarks[i].geometry.coordinates[0], parsed.landmarks[i].geometry.coordinates[1]),
+                                map: map
+                            });
+
+                        }
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.setContent(marker.title);
+                        infowindow.open(map, marker);
                         });
                     }
                 }
-            }
 
         </script>
     </head>
