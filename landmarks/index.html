@@ -54,10 +54,11 @@
                 loc = new google.maps.LatLng(myLat, myLng);
                                 
                 map.panTo(loc);
-        
+                var personal_img = 'http://www.langside-pri.glasgow.sch.uk/Images/PersonIcon16.gif'
                 marker = new google.maps.Marker({
                     position: loc,
-                    title: "Your Location"
+                    title: "My Location",
+                    icon: personal_img
                 });
                 marker.setMap(map);
                                         
@@ -94,7 +95,13 @@
                         icon: person_img,
                         content: findDistance(parsed.people[i].lat, parsed.people[i].lng).toString()
                     });
+                    // Open info window on click of marker
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.setContent(this.title);
+                        infowindow.open(map, this);
+                    });
                 }
+
             }
 
             function lmarkers(parsed) {
@@ -113,13 +120,14 @@
                         var closemark = marker; 
                         closest = marker.content;
                     }
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.setContent(this.title);
+                        infowindow.open(map, this);
+                    });
                 }
-                google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.close();
-                    infowindow.setContent(marker.title);
-                    infowindow.open(map, marker);
-                });
+
             }
+
             function findDistance(lat, lng) {
                 var R = 6371; // km 
                 //has a problem with the .toRad() method below.
