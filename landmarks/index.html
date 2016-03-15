@@ -15,7 +15,7 @@
             var request = new XMLHttpRequest();
             var loc = new google.maps.LatLng(myLat, myLng);
             var myOptions = {
-                zoom: 13, 
+                zoom: 15, 
                 center: loc,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
@@ -34,14 +34,19 @@
                     navigator.geolocation.getCurrentPosition(function(position) {
                         myLat = position.coords.latitude;
                         myLng = position.coords.longitude;
-                        renderMap();
                         var request = senddata();
 
+                    if (request.readyState == 4 && request.status == 200) {
                         request.onreadystatechange = function () {
                             var parsed = JSON.parse(request.responseText);
                             pmarkers(parsed);
-                            lmarkers(parsed);
+                            var cland = new google.maps.Marker({position: loc});
+                            cland = lmarkers(parsed);
+
+                            renderMap(cland);
+
                         };
+                        }
 
                         });
                 }
@@ -50,7 +55,7 @@
                 }
             }
 
-            function renderMap(){
+            function renderMap(cland) {
                 loc = new google.maps.LatLng(myLat, myLng);
                                 
                 map.panTo(loc);
@@ -58,13 +63,28 @@
                 marker = new google.maps.Marker({
                     position: loc,
                     title: "My Location",
-                    icon: personal_img
+                    icon: personal_img,
+                    content: cland.content
                 });
                 marker.setMap(map);
+
+                         var flightPlanCoordinates = [
+                                {lat: myLat, lng: myLng},
+                                {lat: cland.position.lat(), lng: cland.position.lng()},
+                            ];
+
+                            var flightPath = new google.maps.Polyline({
+                                path: flightPlanCoordinates,
+                                geodesic: true,
+                                strokeColor: '#FF0000',
+                                strokeOpacity: 1.0,
+                                strokeWeight: 3
+                            });
                                         
                 // Open info window on click of marker
                 google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent(marker.title);
+                    flightPath.setMap(map);
+                    infowindow.setContent('<h3>' + this.title + '</h3>' + '<h5> Distance to closest landmark: ' + this.content + '</h5>');
                     infowindow.open(map, marker);
                 });
             }
@@ -81,9 +101,8 @@
                 request.send(params);
 
                 return request;
-                //if (request.readyState == 4 && request.status == 200) {
-
                 }
+
             function pmarkers(parsed) {
                 var person_img = 'http://uxrepo.com/static/icon-sets/ionicons/png32/16/000000/person-16-000000.png';
                 for (var i = 0; i < parsed.people.length; i++) {
@@ -97,7 +116,7 @@
                     });
                     // Open info window on click of marker
                     google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.setContent(this.title);
+                        infowindow.setContent ('<h3>' + this.title + '</h3>' + '<h5> Distance: ' + this.content + '</h5>');
                         infowindow.open(map, this);
                     });
                 }
@@ -117,20 +136,22 @@
                         content: findDistance(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0]).toString()
                     });
                     if (marker.content < closest) {
-                        var closemark = marker; 
+                        closemark = marker; 
                         closest = marker.content;
                     }
                     google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.setContent(this.title);
+                        infowindow.setContent ('<h3> Login: ' + this.title + '</h3>' + '<h5> Distance: ' + this.content + 'miles </h5>');
                         infowindow.open(map, this);
                     });
                 }
-
+                return closemark;
             }
 
+
+
+
             function findDistance(lat, lng) {
-                var R = 6371; // km 
-                //has a problem with the .toRad() method below.
+                var R = 3959; // miles 
 
                 var x1 = lat-myLat;
                 var dLat = toRadians(x1);  
@@ -140,7 +161,7 @@
                     Math.cos(toRadians(lat)) * Math.cos(toRadians(myLat)) * 
                     Math.sin(dLon/2) * Math.sin(dLon/2);  
                 var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-                var dist = R * c * 0.62137; //conversion to miles
+                var dist = R * c;
                 return dist;
             }
 
