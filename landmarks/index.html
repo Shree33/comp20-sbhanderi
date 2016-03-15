@@ -35,7 +35,13 @@
                         myLat = position.coords.latitude;
                         myLng = position.coords.longitude;
                         renderMap();
-                        senddata();
+                        var request = senddata();
+                        
+                        request.onreadystatechange = function () {
+                            var parsed = JSON.parse(request.responseText);
+                            pmarkers(parsed);
+                            lmarkers(parsed);
+                        }
 
                         });
                 }
@@ -73,37 +79,39 @@
 
                 request.send(params);
 
-
+                return request;
                 //if (request.readyState == 4 && request.status == 200) {
-                request.onreadystatechange = function () {
-                        var parsed = JSON.parse(request.responseText);
 
-                        /*var person_img = 'http://uxrepo.com/static/icon-sets/ionicons/png32/16/000000/person-16-000000.png'
-                        for (var i = 0; i < parsed.people.length; i++) {
-                            marker = new google.maps.Marker({
-                                title: parsed.people[i].login,
-                                position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
-                                map: map,
-                                icon: person_img
-                            });
-                        }*/
-                        var land_img ='http://findicons.com/files/icons/2564/max_mini_icon/16/flag_red.png'
-                        for (var i = 0; i < parsed.landmarks.length; i++) {
-                            console.log(parsed.landmarks[i].geometry.coordinates[1])
-                            marker = new google.maps.Marker({
-                                title: parsed.landmarks[i].properties.Location_Name,
-                                position: new google.maps.LatLng(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0]),
-                                map: map,
-                                icon: land_img
-                            });
-
-                        }
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.setContent(marker.title);
-                        infowindow.open(map, marker);
-                        });
-                    }
                 }
+            function pmarkers(parsed) {
+                var person_img = 'http://uxrepo.com/static/icon-sets/ionicons/png32/16/000000/person-16-000000.png';
+                for (var i = 0; i < parsed.people.length; i++) {
+                    if(parsed.people[i].login == "LINDA_BRITT") continue;
+                    marker = new google.maps.Marker({
+                        title: parsed.people[i].login,
+                        position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
+                        map: map,
+                        icon: person_img
+                    });
+                }
+            }
+
+            function lmarkers(parsed) {
+                var land_img ='http://findicons.com/files/icons/2564/max_mini_icon/16/flag_red.png'
+                for (var i = 0; i < parsed.landmarks.length; i++) {
+                    marker = new google.maps.Marker({
+                        title: parsed.landmarks[i].properties.Location_Name,
+                        position: new google.maps.LatLng(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0]),
+                        map: map,
+                        icon: land_img
+                    });
+                }
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.close();
+                    infowindow.setContent(marker.title);
+                    infowindow.open(map, marker);
+                });
+            }
 
         </script>
     </head>
