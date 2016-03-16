@@ -8,26 +8,30 @@
     <script>
 
     $(document).ready(function() {
-        reload();
+        reload(); // Allows for messages to display without keypress
         $(document).keypress(function(e) {
             if(e.which == 13) {
-                txt = document.getElementById("msg").value;
+                text = document.getElementById("msg");
 
                 var date = new Date();
-                localStorage.setItem(date, JSON.stringify(txt));
-                reload();
+                localStorage.setItem(date, JSON.stringify(text.value));
+
+                text.value=''; // Clear textfield
+
+                reload(); // Prints all messages in localstorage
             }
         });
     });
 
     function reload() {    
-                var output = "";
-                elem = document.getElementById("log");
+        var output = "";
+        elem = document.getElementById("log");
 
-                for (var i = localStorage.length-1; i >= 0; i--){
-                output = output +"<p>" + localStorage.key(i) + " - " + JSON.parse(localStorage.getItem(localStorage.key(i))) +  "</p>\n";
-                }
-                elem.innerHTML = output;
+        // Starts at end so that newest message is at the top
+        for (var i = localStorage.length-1; i >= 0; i--){
+            output = output +"<p>" + localStorage.key(i) + " - " + JSON.parse(localStorage.getItem(localStorage.key(i))) +  "</p>\n";
+        }
+        elem.innerHTML = output;
     }
     
     </script>
