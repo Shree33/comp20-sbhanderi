@@ -21,7 +21,7 @@ function getLocation() {
         navigator.geolocation.getCurrentPosition(function(position) {
             myLat = position.coords.latitude;
             myLng = position.coords.longitude;
-            var request = senddata();
+            var request = sendData();
 
 
         request.onreadystatechange = function () {
@@ -50,17 +50,16 @@ function renderMap(closemark) {
 
     var flightPath = flight_path(closemark);
 
-    make_my_loc(flightPath, closemark);
+    makeMyLoc(flightPath, closemark);
 
 }
 
-function make_my_loc(flightPath, closemark) {
+function makeMyLoc(flightPath, closemark) {
     var personal_img = 'http://www.langside-pri.glasgow.sch.uk/Images/PersonIcon16.gif'
     marker = new google.maps.Marker({
         position: loc,
-        title: "My Location",
+        title: "LINDA_BRITT",
         icon: personal_img,
-        content: closemark.content
     });
 
     marker.setMap(map);
@@ -68,7 +67,7 @@ function make_my_loc(flightPath, closemark) {
     // Open info window on click of marker
     google.maps.event.addListener(marker, 'click', function() {
         flightPath.setMap(map);
-        infowindow.setContent('<h3>' + this.title + '</h3>' + '<h5> Distance to closest landmark: ' + this.content + '</h5>');
+        infowindow.setContent('<h3> My Location </h3>' + '<h4>' + this.title + '</h4>' +'<h5> Closest landmark: ' + closemark.title + '</h5>' + '<h5> Distance away: ' + closemark.zIndex + '</h5>');
         infowindow.open(map, marker);
     });
 }
@@ -91,7 +90,7 @@ function flight_path(closemark) {
     return flightPath;
 }
 
-function senddata() {
+function sendData() {
     var request = new XMLHttpRequest();
     var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
     var params = "login=LINDA_BRITT&lat=" + myLat + "&lng="+ myLng;
@@ -107,17 +106,17 @@ function senddata() {
 function pmarkers(parsed) {
     var person_img = 'http://uxrepo.com/static/icon-sets/ionicons/png32/16/000000/person-16-000000.png';
     for (var i = 0; i < parsed.people.length; i++) {
-        if( parsed.people[i].login == "LINDA_BRITT") continue;
+        if(parsed.people[i].login == "LINDA_BRITT") continue;
             marker = new google.maps.Marker({
                 title: parsed.people[i].login,
                 position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
                 map: map,
                 icon: person_img,
-                content: findDistance(parsed.people[i].lat, parsed.people[i].lng).toString()
+                content: findDist(parsed.people[i].lat, parsed.people[i].lng).toString()
             });
 
         google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent ('<h3>Landmark: ' + this.title + '</h3>' + '<h5> Distance: ' + this.content + ' miles</h5>');
+            infowindow.setContent ('<h3>Login: ' + this.title + '</h3>' + '<h5> Distance: ' + this.content + ' miles</h5>');
             infowindow.open(map, this);
         });
     }
@@ -125,7 +124,7 @@ function pmarkers(parsed) {
 }
 
 function lmarkers(parsed) {
-    var closemark = new google.maps.Marker({position: loc, content: 1});
+    var closemark = new google.maps.Marker({position: loc, zIndex: 1});
     var land_img ='http://findicons.com/files/icons/2564/max_mini_icon/16/flag_red.png'
 
     for (var i = 0; i < parsed.landmarks.length; i++) {
@@ -134,15 +133,18 @@ function lmarkers(parsed) {
             position: new google.maps.LatLng(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0]),
             map: map,
             icon: land_img,
-            content: findDistance(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0]).toString()
+            content: parsed.landmarks[i].properties.Details,
+            zIndex: findDist(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0])
         });
-
-        if (marker.content < closemark.content) {closemark = marker;}
 
         google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent ('<h3> Login: ' + this.title + '</h3>' + '<h5> Distance: ' + this.content + ' miles </h5>');
+            infowindow.setContent ('<h3> Landmark: ' + this.title + '</h3>' + this.content);
             infowindow.open(map, this);
         });
+
+        if (marker.zIndex < closemark.zIndex) {
+            closemark = marker;
+        }
     }
 
     return closemark;
@@ -150,15 +152,15 @@ function lmarkers(parsed) {
 
 
 
-function findDistance(lat, lng) {
+function findDist(lat, lng) {
     var R = 3959; // miles 
 
-    var x1 = lat-myLat;
+    var x1 = lat - myLat;
     var dLat = toRadians(x1);  
-    var x2 = lng-myLng;
+    var x2 = lng - myLng;
     var dLon = toRadians(x2);  
     var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRadians(lat)) * Math.cos(toRadians(myLat)) * Math.sin(dLon/2) * Math.sin(dLon/2);  
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
     var dist = R * c;
 
     return dist;
