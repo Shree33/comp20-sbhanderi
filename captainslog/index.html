@@ -5,14 +5,42 @@
 <head>
         <title>Captain's Log</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
         <script>
-          // Your work will be done here...
+
+        $(document).ready(function() {
+    $('div').mouseenter(function() {
+        $('div').fadeTo('fast', 1);
+    });
+});
+        /*$(document).ready(function() {
+                $(document).keypress(function(e) {
+                        if(e.which == 13) {
+                        alert('You pressed enter!');
+                        }
+                });
+        }*/
+        
+       /* function reload() {
+                elem = document.getElementById("log");
+                output = "";
+                for (key in localStorage) {
+                        output = output + "<p>" + localStorage[key] + "</p>\n";
+                }
+                elem.innerHTML = output;
+        }
+        
+        function store() {
+                text = document.getElementById("msg").value;
+                localStorage[Date.now()] = txt;
+                reload();
+        }*/
         </script>
 </head>
 
 <body>
         <h1>Captain's Log</h1>
         <h3>New entry: <input type="text" id="msg" name="msg" size="30" /></h3>
-        <div id="log"></div>
+        <div id="log">SHREEEE</div>
 </body>
 </html>
