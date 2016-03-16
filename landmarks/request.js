@@ -11,30 +11,34 @@ var map;
 var marker;
 var infowindow = new google.maps.InfoWindow();
                         
+// Creates and fills map with markers                        
 function init() {
     map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
-    getLocation();
+    renderMap();
 }
-                        
-function getLocation() {
-    if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+
+// Sends and retrieves data, renders map with markers                        
+function renderMap() {
+    if (navigator.geolocation) { // if the navigator.geolocation is supported
         navigator.geolocation.getCurrentPosition(function(position) {
             myLat = position.coords.latitude;
             myLng = position.coords.longitude;
-            var request = sendData();
+            var request = sendData(); // Returns data about other markers
 
 
-        request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 200) {
-                var parsed = JSON.parse(request.responseText);
-                var closemark = new google.maps.Marker({position: loc});
+            request.onreadystatechange = function () {
+                if (request.readyState == 4 && request.status == 200) {
 
-                pmarkers(parsed);
-                closemark = lmarkers(parsed);
+                    parsedata(request); //
 
-                renderMap(closemark);
-            }
-        };
+                    var parsed = JSON.parse(request.responseText);
+                    var closemark = new google.maps.Marker({position: loc});
+
+                    renderUsers(parsed); 
+                    closemark = renderLandmarks(parsed); 
+                    renderSelf(closemark);
+                }
+            };
 
         });
     }
@@ -43,17 +47,20 @@ function getLocation() {
     }
 }
 
-function renderMap(closemark) {
+// Renders self marker, centers map on self
+function renderSelf(closemark) {
     loc = new google.maps.LatLng(myLat, myLng);
                                 
     map.panTo(loc);
 
-    var flightPath = flight_path(closemark);
+    var flightPath = create_path(closemark);
 
     makeMyLoc(flightPath, closemark);
 
 }
 
+// Makes self marker with infowindow containing information and line to nearest
+// landmark
 function makeMyLoc(flightPath, closemark) {
     var personal_img = 'http://www.langside-pri.glasgow.sch.uk/Images/PersonIcon16.gif'
     marker = new google.maps.Marker({
@@ -72,7 +79,9 @@ function makeMyLoc(flightPath, closemark) {
     });
 }
 
-function flight_path(closemark) {
+// Creates flightpath information from self to closest landmark
+// Returns landmark
+function create_path(closemark) {
 
     var flightPlanCoordinates = [
         {lat: myLat, lng: myLng},
@@ -90,6 +99,7 @@ function flight_path(closemark) {
     return flightPath;
 }
 
+// Sends location to server, returns response to request
 function sendData() {
     var request = new XMLHttpRequest();
     var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
@@ -103,10 +113,11 @@ function sendData() {
     return request;
 }
 
-function pmarkers(parsed) {
+// Renders users onto map with infowindow and custom marker
+function renderUsers(parsed) {
     var person_img = 'http://uxrepo.com/static/icon-sets/ionicons/png32/16/000000/person-16-000000.png';
     for (var i = 0; i < parsed.people.length; i++) {
-        if(parsed.people[i].login == "LINDA_BRITT") continue;
+        if(parsed.people[i].login == "LINDA_BRITT") continue; //ignore self
             marker = new google.maps.Marker({
                 title: parsed.people[i].login,
                 position: new google.maps.LatLng(parsed.people[i].lat, parsed.people[i].lng),
@@ -115,6 +126,7 @@ function pmarkers(parsed) {
                 content: findDist(parsed.people[i].lat, parsed.people[i].lng).toString()
             });
 
+        // Add infowindow
         google.maps.event.addListener(marker, 'click', function() {
             infowindow.setContent ('<h3>Login: ' + this.title + '</h3>' + '<h5> Distance: ' + this.content + ' miles</h5>');
             infowindow.open(map, this);
@@ -123,7 +135,9 @@ function pmarkers(parsed) {
 
 }
 
-function lmarkers(parsed) {
+// Renders landmarks onto map with infowindow and custom marker
+// Returns marker object of closest landmark
+function renderLandmarks(parsed) {
     var closemark = new google.maps.Marker({position: loc, zIndex: 1});
     var land_img ='http://findicons.com/files/icons/2564/max_mini_icon/16/flag_red.png'
 
@@ -137,12 +151,13 @@ function lmarkers(parsed) {
             zIndex: findDist(parsed.landmarks[i].geometry.coordinates[1], parsed.landmarks[i].geometry.coordinates[0])
         });
 
+        // Add infowindow
         google.maps.event.addListener(marker, 'click', function() {
             infowindow.setContent ('<h3> Landmark: ' + this.title + '</h3>' + this.content);
             infowindow.open(map, this);
         });
 
-        if (marker.zIndex < closemark.zIndex) {
+        if (marker.zIndex < closemark.zIndex) { //find closest marker
             closemark = marker;
         }
     }
@@ -151,7 +166,8 @@ function lmarkers(parsed) {
 }
 
 
-
+// Finds the distance between self and given point
+// Returns distance in miles
 function findDist(lat, lng) {
     var R = 3959; // miles 
 
@@ -166,6 +182,8 @@ function findDist(lat, lng) {
     return dist;
 }
 
+// Converts Degrees to Radians
+// Returns number in radians
 function toRadians(deg) {
         return deg * (Math.PI/180);
 }
