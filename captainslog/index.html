@@ -8,30 +8,27 @@
     <script>
 
     $(document).ready(function() {
+        reload();
         $(document).keypress(function(e) {
             if(e.which == 13) {
                 txt = document.getElementById("msg").value;
 
                 var date = new Date();
                 localStorage.setItem(date, JSON.stringify(txt));
-                var datetime = getDate(date);
-                
-                elem = document.getElementById("log");
-                for (key in localStorage) {
-                output = "<p>" + datetime + JSON.parse(localStorage.getItem(date)) +  "</p>\n";
-                }
-                elem.innerHTML = output;
-
                 reload();
             }
         });
     });
-    
-    function getDate(date) {
-        var datetime = (date.toString()) + " - ";
-        return datetime;
-    }
 
+    function reload() {    
+                var output = "";
+                elem = document.getElementById("log");
+
+                for (var i = localStorage.length-1; i >= 0; i--){
+                output = output +"<p>" + localStorage.key(i) + " - " + JSON.parse(localStorage.getItem(localStorage.key(i))) +  "</p>\n";
+                }
+                elem.innerHTML = output;
+    }
     
     </script>
 </head>
