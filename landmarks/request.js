@@ -13,7 +13,7 @@ var infowindow = new google.maps.InfoWindow();
                         
 // Creates and fills map with markers                        
 function init() {
-    map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
     renderMap();
 }
 
@@ -29,7 +29,7 @@ function renderMap() {
             request.onreadystatechange = function () {
                 if (request.readyState == 4 && request.status == 200) {
 
-                    parsedata(request); //
+
 
                     var parsed = JSON.parse(request.responseText);
                     var closemark = new google.maps.Marker({position: loc});
@@ -103,7 +103,7 @@ function create_path(closemark) {
 function sendData() {
     var request = new XMLHttpRequest();
     var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
-    var params = "login=LINDA_BRITT&lat=" + myLat + "&lng="+ myLng;
+    var params = "login=LINDA_BRITT&lat=" + myLat + "&lng=" + myLng;
 
     request.open('POST', url , true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
