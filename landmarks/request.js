@@ -102,7 +102,7 @@ function create_path(closemark) {
 // Sends location to server, returns response to request
 function sendData() {
     var request = new XMLHttpRequest();
-    var url = 'https://defense-in-derpth.herokuapp.com/sendLocation';
+    var url = 'https://vast-basin-33477.herokuapp.com/sendLocation';
     var params = "login=LINDA_BRITT&lat=" + myLat + "&lng=" + myLng;
 
     request.open('POST', url , true);
