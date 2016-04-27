@@ -61,7 +61,7 @@
                 width:128px;
                 height:240px;
                 background:url(software.png) 
-                512px 240px;
+                -128px -240px;
         }
 }
 
@@ -71,7 +71,7 @@
                 width:128px;
                 height:240px;
                 background:url(software.png) 
-                384px 240px;
+                -256px -240px;
         }
 }
 
@@ -82,7 +82,7 @@
                 width:128px;
                 height:240px;
                 background:url(software.png) 
-                256px 240px;
+                -384px -240px;
         }
 }
 
@@ -93,7 +93,7 @@
                 width:128px;
                 height:240px;
                 background:url(software.png) 
-                128px 240px;
+                -512px -240px;
         }
 }
 

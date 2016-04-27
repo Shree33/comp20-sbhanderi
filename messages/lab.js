@@ -10,8 +10,8 @@ function parse() {
             data = request.responseText;
             parsed = JSON.parse(data);
 
-            for (count = 0; count < parsed.length; count++) {
-                elem.innerHTML += "<p>" +  parsed[count]["content"] + " " + parsed[count]["username"] + "</p>";
+            for (i = 0; i < parsed.length; i++) {
+                elem.innerHTML += "<p>" +  parsed[i]["content"] + " " + parsed[count]["username"] + "</p>";
             }
         }
     }

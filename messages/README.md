@@ -1,9 +1,13 @@
-The README File
+Messages Lab
+Author: Shreenath Bhanderi
 
-Every assignment and lab shall include a README file that describes the work. This description must:
+This website pulls data from the included json file and displays it on the html page correctly formatted.
 
-Identify what aspects of the work have been correctly implemented and what have not.
-Identify anyone with whom you have collaborated or discussed the assignment.
-Say approximately how many hours you have spent completing the assignment.
-Be written in either text format (README.txt) or in Markdown (README.md). No other formats will be accepted.
-For this lab, you must also answer an important question: is it possible to request the data from a different origin (e.g., http://messagehub.herokuapp.com/) or from your local machine (from file:///) from using XMLHttpRequest? Why or why not? Please read the following three articles, in order, to help you answer this question:
+Implementation: Everything has been correctly implemented according to the  instructions.
+
+Collaboration: I did not discuss this lab with anyone else.
+
+Hours: This lab took 2 hours to finish.
+
+Questions: is it possible to request the data from a different origin (e.g., http://messagehub.herokuapp.com/) or from your local machine (from file:///) from using XMLHttpRequest? Why or why not?: No, Since XMLHttpRequest adheres to same-origin policy, we can not access the data located in those locations.
+
