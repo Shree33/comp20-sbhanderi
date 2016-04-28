@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+        <title>Assignment 4: Security</title>
+
+</head>
+
+<body>
+        <h1>Assignment 4: Security</h1>
+        <h2>By: Shreenath Bhanderi</h2>
+
+        <h2>Introduction</h2>
+
+        <p> For this assignment, I analyzed Aditya Hurry's landmarks server for security and privacy.  Aditya's server was tasked with sending and receiving responses with user data including sensitive information such as the location of a user. This server was then used in conjunction with a website to display the locations on a map. This server was set up to only release each users name and location if a client's request contained his or her login and location. Otherwise, oeither only the time a user checked in was shown or the location of a user was given if the request contained the user's name.</p>
+
+
+        <br>
+        In this analysis, I have found three security issues in Aditya's landmarks server and have addressed how to resolve each one.
+        </p>
+
+        <h2>Methodology</h2>
+
+        <p>I initially tested the code using the black-box method and reviewed the server source code to look for additional errors. I used my chrome web browser, curl, and shell scripting in my testing.</p>
+
+        <h2>Abstract of Findings</h2>
+
+        <p>Most of the vulnerabilities in this code come from inexperience in server security.  Sadly, security is often not taught in university programs and many developers come out of college without the knowledge of how vulnerable their web sites and servers are. Aditya used Jade to create the front end of his assignment so many of his inputs were scrubbed for cross site scripting vulnerabilities. However, I was still able to find many ways that a hacker could disrupt the website by taking advantage of the server.</p>
+
+        <h2>Issues Found</h2>
+                <h3>1. Queries allow access to other user's data </h3>
+                <ul>
+                        <li><b>The issue:</b> Affects the GET /checkins.json API</li>
+                        <li><b>Where:</b> This problem occurs in the server code when a query is used to get access to certain information.</li>
+                        <li><b>Low Risk:</b>the application already allows a person to see other users' locations but if the API were used by someone who was not supposed to have this access, then would become a problem. </li>
+                        <li><b>Description:</b> The Mongo search takes in the query as part of a parameter for a search allowing an attacker to add items such $gt to the query for malicious purposes. If the /checkins.json were used by another application, this could be used to find another user's location data for possible malicious purposes. An example of such a query is: "https://aqueous-wildwood-79601.herokuapp.com/checkins.json?login[$gt]=" which works by asking for every login greater than nothing. </li>
+                        <li><b>Result:</b></li> <li><img height="400" width="800" src="hack1.png" alt="post-injection" title="After injection"/></li>
+                        <li><b>Resolution:</b> To resolve this issue, Aditya can simply scrub out any special characters such as '$' before searching the databased with the query.</li>
+                </ul>
+
+                <h3>2. Server crash through invalid queries on Mongo</h3>
+                <ul>
+                        <li><b>The issue:</b> An attacker could crash the server by executing a nonsense request. </li>
+                        <li><b>Where:</b> This problem occurs in the server code when a query is an undefined data value.</li>
+                        <li><b>High Risk:</b> An attacker could quickly and easily crash the server from a browser window. </li>
+                        <li><b>Description:</b> For example, calling https://aqueous-wildwood-79601.herokuapp.com/checkins.json?login[$where]=nonsense on a web browser will crash the server since the query checks for null data but not undefined data. The $where operater can also be used to execute limited javascript on the database which can be used to lock the server or look up sensistive data.</li>
+                        <li><b>Result:</b></li> <li>
+                        <img height="400" width="800" src="Hack2.png" alt="badqueryexample" />
+                        </li>
+                        <li><b>Resolution:</b> Aditya can resolve this security issue by scrubbing out any special characters just as he should do for issue 1. 
+                </ul>
+
+                <h3>3. Injecting Infinite Data</h3>
+                <ul>
+                        <li><b>The issue:</b> An infinite amount of data can be added to the database, which will cause issues such as crashing a program that uses this api or overloading Mongo/Heroku. </li>
+                        <li><b>Where:</b> This problem occurs in the server code. </li>
+                        <li><b>High risk:</b> Anybody who knows the right parameters could create a shell script that can cause this issue.</li>
+                        <li><b>Description:</b> This issue is caused by teh lack of conditional testing in Aditya's code for how much data is being inserted or how quickly it is being inserted. </li>
+                        <li><b>Result:</b></li> <li>
+                                <br>
+                                <br>
+                                <img height="200" width="800" src="Hack3-1.png" alt="shellScript" />
+                                <img height="400" width="800" src="Hack3-2.png" alt="shellScriptaftermath"/>
+                                <br>
+                        </li>
+                        <li><b>Resolution:</b> Aditya can patch this issue by limiting the amount of times a user can insert data in a given timeframe. However, a better written bash script could vary the username so a better check might be to limit how many times a certain ip address can insert data. </li>
+                </ul>
+
+        <h2>Conclusion</h2>
+
+        <p>As demonstrated by the three issues described above, security is something that every developer should be cognizant of because even with apis that come with security features, there are still ways to access secured content. These issues solved above show that although there may be many ways to breach a websites security, the solutions to stop these breaches are not too hard to implement. I can see why Aditya's server may not be fully protected as he had not learned about security beforehand but it scares me to think that many people are coding websites without really understanding security and some of those sites may have private information about me.</p>
+</body>
+
+</html>
+
